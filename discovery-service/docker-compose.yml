@@ -1,0 +1,34 @@
+version: '3.8'
+
+services:
+  # App backend service
+  discovery_app:
+    image: discovery-service.jar
+    # Give the container the name web-app. You can changes to something else.
+    container_name: discovery
+    # Forward the exposed port 8080 on the container to port 8080 on the host machine
+    ports:
+      - "8761:8761"
+    # This service depends on postgres. Start that first.
+    depends_on:
+      - db
+    # Service health check
+  # Database Service (Postgres)
+  db:
+    # Use the Docker Image postgres. This will pull the 12 version.
+    image: postgres:13
+    # Give the container the name postgres-db. You can changes to something else.
+    container_name: postgres-0
+    restart: always
+    # Set a volume some that database is not lost after shutting down the container.
+    # I used the name postgres-data but you can changed it to something else.
+    # Maps port 5432 (localhost) to port 5432 on the container. You can change the ports to fix your needs.
+    ports:
+      - "5432:5432"
+    # Setup the username, password, and database name. You can changes these values.
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 12345
+      POSTGRES_DB: merchants
+    # Service health check
+  # Database Service (Postgres) for Keycloak
